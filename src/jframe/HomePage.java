@@ -4,10 +4,8 @@
  */
 package jframe;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,10 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
@@ -80,9 +76,7 @@ public class HomePage extends javax.swing.JFrame {
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost/library_management_system", "root", "");
         } catch (SQLException ex) {
-            Logger.getLogger(ManageBooks.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ManageBooks.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -110,7 +104,6 @@ public class HomePage extends javax.swing.JFrame {
                 d.addRow(v2);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ManageBooks.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -678,8 +671,6 @@ public class HomePage extends javax.swing.JFrame {
 
     private void jLabel13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MouseClicked
         // TODO add your handling code here:
-        ManageBooks mb = new ManageBooks(id, uname, usertype);
-        mb.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jLabel13MouseClicked
 
