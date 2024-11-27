@@ -44,6 +44,8 @@ public class LoginPage extends javax.swing.JFrame {
     public JComboBox<String> getTxtUserType() {
         return txt_usertype;
     }
+    
+    
 
     public void Connect() {
 
@@ -61,12 +63,12 @@ public class LoginPage extends javax.swing.JFrame {
         String pwd = txt_password.getText();
 
         if (name.equals("")) {
-            JOptionPane.showMessageDialog(this, "please enter your username!");
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên đăng nhập!");
             return false;
         }
 
         if (pwd.equals("")) {
-            JOptionPane.showMessageDialog(this, "please enter your password!");
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu");
             return false;
 
         }
