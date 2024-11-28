@@ -29,6 +29,7 @@ import org.jfree.data.general.DefaultPieDataset;
  *
  * @author Name
  */
+
 public class HomePage extends javax.swing.JFrame {
 
     /**
@@ -36,6 +37,32 @@ public class HomePage extends javax.swing.JFrame {
      */
     // Mouse Hover Effect
 
+public javax.swing.JLabel getLbl_noOfBooks() {
+    return lbl_noOfBooks;
+}
+    // Getter cho lbl_noOfStudents
+public javax.swing.JLabel getLbl_noOfStudents() {
+    return lbl_noOfStudents;
+}
+
+// Getter cho lbl_noOfIssuedBooks
+public javax.swing.JLabel getLbl_noOfIssuedBooks() {
+    return lbl_noOfIssuedBooks;
+}
+
+// Getter cho lbl_noOfDefaulters
+public javax.swing.JLabel getLbl_noOfDefaulters() {
+    return lbl_noOfDefaulters;
+}
+// Getter cho jTable1
+public javax.swing.JTable getJTable1() {
+    return jTable1;
+}
+
+// Getter cho jTable2
+public javax.swing.JTable getJTable2() {
+    return jTable2;
+}
 
     // default constructor
     public HomePage() {
@@ -52,7 +79,7 @@ public class HomePage extends javax.swing.JFrame {
 
     // set Icon method
     private void setIconImage() {
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("logo.png")));
+       // setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("logo.png")));
 
     }
 
