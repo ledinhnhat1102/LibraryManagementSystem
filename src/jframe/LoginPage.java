@@ -107,7 +107,7 @@ public class LoginPage extends javax.swing.JFrame {
             if (rs.next()) {
                 int id = rs.getInt("id");
                 JOptionPane.showMessageDialog(this, "Login successful!");
-                new HomePage(id, name, utype).setVisible(true);
+                new HomePage(id, name, utype).setVisible(true);       
                 this.dispose();
 
             } else {

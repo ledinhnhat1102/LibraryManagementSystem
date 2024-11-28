@@ -514,7 +514,7 @@ public class SignUpPage extends javax.swing.JFrame {
 
     private void loginbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginbuttonActionPerformed
         // TODO add your handling code here:
-        HomePage hp = new HomePage(id, uname, usertype);
+        HomePage hp = new HomePage(id, uname, usertype);           
         hp.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_loginbuttonActionPerformed
