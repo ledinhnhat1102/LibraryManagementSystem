@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import javax.swing.table.TableModel;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  *
@@ -110,30 +111,53 @@ public class ManageBooks extends javax.swing.JFrame {
     
     public boolean addBook(){
         boolean isAdded = false;
-        bookId = Integer.parseInt(txt_bookId.getText());
+
+    try {
+        // Kiểm tra các trường đầu vào
+        if (txt_bookId.getText().isEmpty() || 
+            txt_bookName.getText().isEmpty() || 
+            txt_authorName.getText().isEmpty() || 
+            txt_quantity.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!");
+            return false;
+        }
+
+        // Kiểm tra và chuyển đổi giá trị số
+        int bookId, quantity;
+        try {
+            bookId = Integer.parseInt(txt_bookId.getText());
+            quantity = Integer.parseInt(txt_quantity.getText());
+
+            if (quantity <= 0) {
+                JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "ID sách và số lượng phải là số hợp lệ!");
+            return false;
+        }
+
+        // Gán giá trị chuỗi
         bookName = txt_bookName.getText();
         author = txt_authorName.getText();
-        quantity = Integer.parseInt(txt_quantity.getText());
-        
-        try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library_management_system", "root", "");
-            String sql = "insert into book_details values(?,?,?,?)";
-            PreparedStatement pst = con.prepareStatement(sql);
-            pst.setInt(1, bookId);
-            pst.setString(2, bookName);
-            pst.setString(3, author);
-            pst.setInt(4, quantity);
-            
-            int rowCount = pst.executeUpdate();
-            if (rowCount > 0) {
-                isAdded = true;
-            }else{
-                isAdded = false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return isAdded;
+
+        // Kết nối cơ sở dữ liệu và thực hiện thêm sách
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library_management_system", "root", "");
+        String sql = "INSERT INTO book_details (book_id, book_name, author, quantity) VALUES (?, ?, ?, ?)";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setInt(1, bookId);
+        pst.setString(2, bookName);
+        pst.setString(3, author);
+        pst.setInt(4, quantity);
+
+        int rowCount = pst.executeUpdate();
+        isAdded = rowCount > 0; // Nếu thêm thành công, rowCount > 0
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Lỗi khi kết nối cơ sở dữ liệu: " + e.getMessage());
+        e.printStackTrace();
+    }
+
+    return isAdded;
     }
     
     public boolean updateBook() {
@@ -144,7 +168,7 @@ public class ManageBooks extends javax.swing.JFrame {
         quantity = Integer.parseInt(txt_quantity.getText());
         
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library_management_system", "root", "");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/library_management_system", "root", "");
             String sql = "update book_details set book_name = ?,author = ?,quantity = ? where book_id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, bookName);
@@ -262,11 +286,11 @@ public class ManageBooks extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Enter Book Id");
+        jLabel2.setText("Nhập ID sách");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(144, 183, 103, -1));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Enter Book Name");
+        jLabel3.setText("Nhập tên sách");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(144, 289, 102, -1));
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
@@ -274,11 +298,11 @@ public class ManageBooks extends javax.swing.JFrame {
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(144, 394, 94, -1));
 
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Quantity");
+        jLabel5.setText("Số lượng");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(144, 500, 123, -1));
 
         rSMaterialButtonCircle1.setBackground(new java.awt.Color(255, 102, 0));
-        rSMaterialButtonCircle1.setText("UPDATE");
+        rSMaterialButtonCircle1.setText("Chỉnh sửa");
         rSMaterialButtonCircle1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rSMaterialButtonCircle1ActionPerformed(evt);
@@ -287,7 +311,7 @@ public class ManageBooks extends javax.swing.JFrame {
         jPanel1.add(rSMaterialButtonCircle1, new org.netbeans.lib.awtextra.AbsoluteConstraints(239, 592, 121, 66));
 
         rSMaterialButtonCircle2.setBackground(new java.awt.Color(255, 102, 0));
-        rSMaterialButtonCircle2.setText("DELETE");
+        rSMaterialButtonCircle2.setText("Xóa");
         rSMaterialButtonCircle2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rSMaterialButtonCircle2ActionPerformed(evt);
@@ -296,7 +320,7 @@ public class ManageBooks extends javax.swing.JFrame {
         jPanel1.add(rSMaterialButtonCircle2, new org.netbeans.lib.awtextra.AbsoluteConstraints(405, 592, 121, 66));
 
         rSMaterialButtonCircle3.setBackground(new java.awt.Color(255, 102, 0));
-        rSMaterialButtonCircle3.setText("ADD");
+        rSMaterialButtonCircle3.setText("Thêm");
         rSMaterialButtonCircle3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rSMaterialButtonCircle3ActionPerformed(evt);
@@ -318,7 +342,6 @@ public class ManageBooks extends javax.swing.JFrame {
 
         txt_quantity.setBackground(new java.awt.Color(51, 102, 255));
         txt_quantity.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 255)));
-        txt_quantity.setText("Quantity: ...");
         txt_quantity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_quantityActionPerformed(evt);
@@ -328,12 +351,10 @@ public class ManageBooks extends javax.swing.JFrame {
 
         txt_bookId.setBackground(new java.awt.Color(51, 102, 255));
         txt_bookId.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 255)));
-        txt_bookId.setText("Enter Book Id: ...");
         jPanel1.add(txt_bookId, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 210, 310, -1));
 
         txt_bookName.setBackground(new java.awt.Color(51, 102, 255));
         txt_bookName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 255)));
-        txt_bookName.setText("Enter Book Name: ...");
         txt_bookName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_bookNameActionPerformed(evt);
@@ -343,7 +364,6 @@ public class ManageBooks extends javax.swing.JFrame {
 
         txt_authorName.setBackground(new java.awt.Color(51, 102, 255));
         txt_authorName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(255, 255, 255)));
-        txt_authorName.setText("Author Name: ...");
         txt_authorName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_authorNameActionPerformed(evt);
@@ -354,7 +374,7 @@ public class ManageBooks extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(255, 102, 0));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Rewind_48px.png"))); // NOI18N
-        jLabel1.setText("Back");
+        jLabel1.setText("Quay lại");
         jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel1MouseClicked(evt);
@@ -417,7 +437,7 @@ public class ManageBooks extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Book Id", "Name", "Author", "Quantity"
+                "Id Sách", "Tên sách", "Tác giả", "Số lượng"
             }
         ));
         tbl_bookDetails.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -436,8 +456,8 @@ public class ManageBooks extends javax.swing.JFrame {
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 30)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 102, 0));
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/AddNewBookIcons/icons8_Books_52px_1.png"))); // NOI18N
-        jLabel11.setText("  Management Books");
-        jPanel3.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 70, 350, -1));
+        jLabel11.setText("Quản lý sách");
+        jPanel3.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 70, 240, -1));
 
         jPanel5.setBackground(new java.awt.Color(255, 102, 51));
 
@@ -445,14 +465,14 @@ public class ManageBooks extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 440, Short.MAX_VALUE)
+            .addGap(0, 390, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 5, Short.MAX_VALUE)
         );
 
-        jPanel3.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 130, 440, 5));
+        jPanel3.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 130, 390, 5));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
         jLabel12.setText("Tìm kếm:");
@@ -478,9 +498,9 @@ public class ManageBooks extends javax.swing.JFrame {
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         // TODO add your handling code here:
-        HomePage home = new HomePage();
-        home.setVisible(true);
-        dispose();
+        //HomePage home = new HomePage();
+        //home.setVisible(true);
+        //dispose();
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void rSMaterialButtonCircle3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rSMaterialButtonCircle3ActionPerformed
