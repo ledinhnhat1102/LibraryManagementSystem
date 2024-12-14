@@ -5,11 +5,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import static org.junit.Assert.assertEquals;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 
 public class LoginPageTest {
+    private LoginPage loginPage;
+
+    @Before
+    public void setUp() {
+        loginPage = new LoginPage();
+    }
 
     private final String url = "jdbc:mysql://localhost:3306/library_management_system";
     private final String username = "root";
@@ -29,7 +37,7 @@ public class LoginPageTest {
     public void testLoginWithInvalidCredentials() {
         String inputUsername = "invalid_user";
         String inputPassword = "wrong_password";
-        String inputUserType = "User"; 
+        String inputUserType = "Admin"; 
 
         boolean result = authenticateUser(inputUsername, inputPassword, inputUserType);
         assertFalse("Đăng nhập với thông tin không hợp lệ phải thất bại.", result);
@@ -60,5 +68,33 @@ public class LoginPageTest {
             e.printStackTrace();
             return false; // Trong trường hợp xảy ra lỗi, coi như đăng nhập thất bại
         }
+    }
+    
+    //phan quyen
+    @Test
+    public void testLoginAsAdmin() {
+        loginPage.getTxtUsername().setText("admin");
+        loginPage.getTxtPassword().setText("admin");
+        loginPage.getTxtUserType().setSelectedItem("Admin");
+        loginPage.Connect();
+        loginPage.login();
+
+        String role = loginPage.getTxtUserType().getSelectedItem().toString();
+        assertEquals("Admin", role);
+    }
+
+    @Test
+    public void testLoginAsStudent() {
+
+        loginPage.getTxtUsername().setText("huynguyen");
+        loginPage.getTxtPassword().setText("huynguyen123");
+        loginPage.getTxtUserType().setSelectedItem("Student");
+
+        loginPage.Connect();
+
+        loginPage.login();
+
+        String role = loginPage.getTxtUserType().getSelectedItem().toString();
+        assertEquals("Student", role);
     }
 }

@@ -18,14 +18,8 @@ public class LoginPage extends javax.swing.JFrame {
     public LoginPage() {
         initComponents();
         Connect();
-
-        setIconImage();
+        
         txt_username.requestFocus();
-    }
-
-    // Set Icon method
-    private void setIconImage() {
-
     }
 
     Connection con;
@@ -92,6 +86,7 @@ public class LoginPage extends javax.swing.JFrame {
                 int id = rs.getInt("id");
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
                 this.dispose();
+                new HomePage().setVisible(true); 
 
             } else {
                 JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác");
@@ -263,6 +258,11 @@ public class LoginPage extends javax.swing.JFrame {
         loginbutton.setBackground(new java.awt.Color(0, 0, 255));
         loginbutton.setText("Đăng nhập");
         loginbutton.setToolTipText("");
+        loginbutton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loginbuttonMouseClicked(evt);
+            }
+        });
         loginbutton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginbuttonActionPerformed(evt);
@@ -278,7 +278,7 @@ public class LoginPage extends javax.swing.JFrame {
         txt_usertype.setBackground(new java.awt.Color(51, 153, 255));
         txt_usertype.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txt_usertype.setForeground(new java.awt.Color(51, 51, 51));
-        txt_usertype.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chọn", "Admin", "Librarian", "Student", "Guest" }));
+        txt_usertype.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chọn", "Admin", "Student" }));
         txt_usertype.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel2.add(txt_usertype, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 540, 300, 40));
 
@@ -333,6 +333,10 @@ public class LoginPage extends javax.swing.JFrame {
         new SignUpPage().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void loginbuttonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginbuttonMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_loginbuttonMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

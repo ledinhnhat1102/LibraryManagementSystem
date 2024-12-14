@@ -150,8 +150,21 @@ public class SignUpPage extends javax.swing.JFrame {
         }
         return true;
     }
+    
+    //Phaan quyen
+    public boolean assignRole() {
+    String userType = (String) txtutype.getSelectedItem();
 
-    // Checking duplicate user details
+    if (userType.equals("Admin") || userType.equals("Student")) {
+        return true; 
+    } else {
+        JOptionPane.showMessageDialog(this, "Vai trò không hợp lệ");
+        return false; 
+    }
+}
+
+
+
     public boolean checkDublicateUser() {
         boolean isExits = false;
         try {
@@ -388,7 +401,7 @@ public class SignUpPage extends javax.swing.JFrame {
         txtutype.setBackground(new java.awt.Color(51, 153, 255));
         txtutype.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtutype.setForeground(new java.awt.Color(51, 51, 51));
-        txtutype.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chọn", "Admin", "Librarian", "Student", "Guest" }));
+        txtutype.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chọn", "Admin", "Student" }));
         txtutype.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel2.add(txtutype, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 570, 300, 40));
 

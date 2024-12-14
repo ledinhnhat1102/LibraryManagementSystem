@@ -12,13 +12,11 @@ public class SignUpPageTest {
 
     @Before
     public void setUp() {
-        // Khởi tạo đối tượng SignUpPage trước mỗi bài kiểm tra
         signUpPage = new SignUpPage();
     }
 
     @Test
     public void testSignUpSuccess() {
-        // Thiết lập thông tin hợp lệ
         signUpPage.getTxtUsername().setText("nhat1234");
         signUpPage.getTxtPassword().setText("nhat1234");
         signUpPage.getTxtEmail().setText("nhat1234@gmail.com.com");
@@ -31,7 +29,6 @@ public class SignUpPageTest {
 
     @Test
     public void testSignUpFailWithEmptyFields() {
-        // Thiết lập thông tin thiếu (bỏ trống một số trường)
         signUpPage.getTxtUsername().setText("");
         signUpPage.getTxtPassword().setText("");
         signUpPage.getTxtEmail().setText("nhat1234@gmail.com");
@@ -41,4 +38,27 @@ public class SignUpPageTest {
         boolean isValid = signUpPage.validateUser();
         assertFalse("Đăng ký thất bại do bỏ trống trường thông tin", isValid);
     }
+    
+    //phan quyen
+     @Test
+    public void testAssignAdminRole() {
+        signUpPage.getTxtutype().setSelectedItem("Admin");
+        boolean isRoleValid = signUpPage.assignRole();
+        assertTrue("Vai trò Admin được chấp nhận.", isRoleValid);
+    }
+
+    @Test
+    public void testAssignStudentRole() {
+        signUpPage.getTxtutype().setSelectedItem("Student");
+        boolean isRoleValid = signUpPage.assignRole();
+        assertTrue("Vai trò Student được chấp nhận.", isRoleValid);
+    }
+
+    @Test
+    public void testAssignInvalidRole() {
+        signUpPage.getTxtutype().setSelectedItem("InvalidRole");
+        boolean isRoleValid = signUpPage.assignRole();
+        assertFalse("Vai trò không hợp lệ bị từ chối.", isRoleValid);
+    }
+    
 }
