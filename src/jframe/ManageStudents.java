@@ -249,11 +249,7 @@ public class ManageStudents extends javax.swing.JFrame {
 
         piePlot.setBackgroundPaint(Color.white);
 
-        //create chartPanel to display chart(graph)
-        ChartPanel barChartPanel = new ChartPanel(piechart);
-        panelPieChart.removeAll();
-        panelPieChart.add(barChartPanel, BorderLayout.CENTER);
-        panelPieChart.validate();
+      
     }
 
     /**
@@ -277,7 +273,6 @@ public class ManageStudents extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         editbutton = new rojerusan.RSMaterialButtonRectangle();
-        clearbutton = new rojerusan.RSMaterialButtonRectangle();
         addbutton = new rojerusan.RSMaterialButtonRectangle();
         deletebutton = new rojerusan.RSMaterialButtonRectangle();
         jPanel4 = new javax.swing.JPanel();
@@ -301,7 +296,6 @@ public class ManageStudents extends javax.swing.JFrame {
         jLabel17 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        panelPieChart = new javax.swing.JPanel();
 
         jPanel3.setBackground(new java.awt.Color(255, 51, 51));
 
@@ -420,15 +414,6 @@ public class ManageStudents extends javax.swing.JFrame {
             }
         });
         jPanel1.add(editbutton, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 620, 170, 50));
-
-        clearbutton.setBackground(new java.awt.Color(255, 51, 51));
-        clearbutton.setText("xóa tất cả");
-        clearbutton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearbuttonActionPerformed(evt);
-            }
-        });
-        jPanel1.add(clearbutton, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 700, 170, 50));
 
         addbutton.setBackground(new java.awt.Color(255, 51, 51));
         addbutton.setText("thêm");
@@ -681,9 +666,6 @@ public class ManageStudents extends javax.swing.JFrame {
         });
         jPanel7.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 0, 130, 40));
 
-        panelPieChart.setLayout(new java.awt.BorderLayout());
-        jPanel7.add(panelPieChart, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 380, 450, 330));
-
         getContentPane().add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 0, 710, 820));
 
         setSize(new java.awt.Dimension(1289, 788));
@@ -746,17 +728,6 @@ public class ManageStudents extends javax.swing.JFrame {
             Logger.getLogger(ManageStudents.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_addbuttonActionPerformed
-
-    // Clear text method
-    private void clearbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearbuttonActionPerformed
-        // TODO add your handling code here:
-        txt_studentid.setText("");
-        txt_studentname.setText("");
-        txt_course.setSelectedIndex(0);
-        txt_branch.setSelectedIndex(0);
-        txt_studentid.requestFocus();
-        addbutton.setEnabled(true);
-    }//GEN-LAST:event_clearbuttonActionPerformed
 
     // Mouse click to form method
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -925,7 +896,6 @@ public class ManageStudents extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private rojerusan.RSMaterialButtonRectangle addbutton;
-    private rojerusan.RSMaterialButtonRectangle clearbutton;
     private rojerusan.RSMaterialButtonRectangle deletebutton;
     private rojerusan.RSMaterialButtonRectangle editbutton;
     private javax.swing.JLabel jLabel1;
@@ -956,7 +926,6 @@ public class ManageStudents extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane2;
     private rojeru_san.complementos.RSTableMetro jTable1;
-    private javax.swing.JPanel panelPieChart;
     private javax.swing.JComboBox<String> txt_branch;
     private javax.swing.JComboBox<String> txt_course;
     private app.bolivia.swing.JCTextField txt_studentid;
