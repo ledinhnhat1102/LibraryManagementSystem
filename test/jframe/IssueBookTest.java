@@ -40,5 +40,21 @@ public class IssueBookTest {
 
         assertTrue(issueBook.getTxtBookError().contains("Không tìm thấy mã sách!"));
     }
+    @Test
+    public void testGetBookDetailsInvalidId() {
+        issueBook.setIssueBookId(""); 
+        issueBook.setTxtBookError("Mã sách không hợp lệ!");
+
+        assertTrue(issueBook.getIssueBookId().isEmpty());
+        assertTrue(issueBook.getTxtBookError().contains("Mã sách không hợp lệ!"));
+
+        issueBook.setIssueBookId("123@abc"); 
+        issueBook.setTxtBookError("Mã sách không hợp lệ!");
+
+        assertEquals("123@abc", issueBook.getIssueBookId());
+        assertTrue(issueBook.getTxtBookError().contains("Mã sách không hợp lệ!"));
+    }
+
+
 }
 
