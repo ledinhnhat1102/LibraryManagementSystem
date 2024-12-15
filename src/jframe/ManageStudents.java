@@ -50,6 +50,11 @@ public class ManageStudents extends javax.swing.JFrame {
     public javax.swing.JButton getEditbutton() {
         return editbutton;
     }
+  // Getter cho jTable1
+    public rojeru_san.complementos.RSTableMetro getJTable1() {
+        return jTable1;
+    }
+
 
     
 
