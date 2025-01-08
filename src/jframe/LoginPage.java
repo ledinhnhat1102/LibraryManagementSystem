@@ -45,7 +45,7 @@ public class LoginPage extends javax.swing.JFrame {
         return txt_usertype;
     }
 
-    public void Connect() {
+   public void Connect() {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
