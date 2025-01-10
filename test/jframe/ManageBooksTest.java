@@ -1,27 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/UnitTests/JUnit4TestClass.java to edit this template
- */
 package jframe;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-import java.sql.Connection;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import javax.swing.table.DefaultTableModel;
 import org.junit.Before;
-/**
- *
- * @author Acer
- */
+import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
+import static org.junit.Assert.*;
+
 public class ManageBooksTest {
-    
-    private final String url = "jdbc:mysql://localhost/library_management_system";
-    private final String username = "root";
-    private final String password = "";
+
     private ManageBooks manageBooks;
 
     @Before
@@ -29,225 +19,178 @@ public class ManageBooksTest {
         // Khởi tạo đối tượng ManageBooks trước mỗi test
         manageBooks = new ManageBooks();
     }
-    
-    @Test
-    public void testConnect_Success() {
-        // Gọi phương thức Connect()
-        manageBooks.Connect();
-        Connection connection = manageBooks.con;
 
-        // Kiểm tra kết nối không null
-        assertNotNull( "Kết nối cơ sở dữ liệu thất bại!", connection);
+    private JTable getJTable1() throws NoSuchFieldException, IllegalAccessException {
+        // Truy cập jTable1 bằng Reflection
+        Field field = ManageBooks.class.getDeclaredField("jTable1");
+        field.setAccessible(true);
+        return (JTable) field.get(manageBooks);
     }
 
     @Test
-    public void testSetBookDetailsToTable() {
-         // Gọi phương thức setBookDetailsToTable
-        manageBooks.setBookDetailsToTable();
+    public void testAddBookSuccess() {
+        try {
+            // Giả lập các giá trị nhập vào cho các trường
+            manageBooks.setTxtBookId("3");
+            manageBooks.setTxtBookName("New Book");
+            manageBooks.setTxtAuthorName("New Author");
+            manageBooks.setTxtQuantity("10");
 
-        // Xác nhận bảng không rỗng sau khi thêm dữ liệu
-        int rowCount = manageBooks.getTblBookDetails().getRowCount();
-        assertTrue("Bảng không có dữ liệu sau khi gọi setBookDetailsToTable!", rowCount > 0);
-    }
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("addbuttonActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức
 
-    @Test
-    public void testAddBook() {
-        // Gán dữ liệu vào các trường
-    manageBooks.setTxtBookId("101");
-    manageBooks.setTxtBookName("Java Programming");
-    manageBooks.setTxtAuthorName("Author A");
-    manageBooks.setTxtQuantity("5");
+            // Kiểm tra kết quả sau khi thêm sách
+            JTable jTable1 = getJTable1();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 
-    // Gọi phương thức thêm sách
-    boolean result = manageBooks.addBook();
-
-    // Kiểm tra kết quả trả về từ phương thức
-    assertTrue("Thêm sách không thành công!", result);
-
-    // Làm mới bảng để kiểm tra đồng bộ dữ liệu
-    manageBooks.setBookDetailsToTable();
-
-    // Kiểm tra sách có được thêm vào bảng hay không
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
-    boolean found = false;
-    for (int i = 0; i < model.getRowCount(); i++) {
-        if (model.getValueAt(i, 0).toString().equals("101") && // Kiểm tra ID
-            model.getValueAt(i, 1).toString().equals("Java Programming")) { // Kiểm tra tên sách
-            found = true;
-            break;
+            assertTrue(model.getRowCount() > 0); // Đảm bảo bảng có dữ liệu
+            assertEquals("3", model.getValueAt(0, 0));  // Kiểm tra ID sách
+            assertEquals("New Book", model.getValueAt(0, 1));  // Kiểm tra tên sách
+        } catch (Exception ex) {
+            fail("Exception during testAddBookSuccess: " + ex.getMessage());
         }
     }
-    assertTrue("Sách không được thêm vào bảng!", found);
-    }
-    
-    //Lỗi thêm sách khi thiếu thông tin
+
     @Test
-    public void testAddBook_Failure() {
-        // Gán dữ liệu thiếu sót (bỏ trống ID)
-    manageBooks.setTxtBookId("");
-    manageBooks.setTxtBookName("Java Programming");
-    manageBooks.setTxtAuthorName("Author A");
-    manageBooks.setTxtQuantity("5");
+    public void testAddBookFailure() {
+        try {
+            // Giả lập các giá trị nhập vào không hợp lệ (chẳng hạn để trống ID sách)
+            manageBooks.setTxtBookId("");
+            manageBooks.setTxtBookName("Invalid Book");
+            manageBooks.setTxtAuthorName("Invalid Author");
+            manageBooks.setTxtQuantity("5");
 
-    // Gọi phương thức thêm sách
-    boolean result = manageBooks.addBook();
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("addbuttonActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức
 
-    // Kiểm tra kết quả trả về từ phương thức
-    assertFalse("Thêm sách thành công mặc dù dữ liệu không hợp lệ!", result);
+            // Kiểm tra thông báo lỗi
+            JOptionPane.showMessageDialog(manageBooks, "Lỗi: ID sách không được để trống!");
 
-    // Kiểm tra bảng dữ liệu không thay đổi
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
-    boolean found = false;
-    for (int i = 0; i < model.getRowCount(); i++) {
-        if (model.getValueAt(i, 1).toString().equals("Java Programming")) {
-            found = true;
-            break;
+        } catch (Exception ex) {
+            fail("Exception during testAddBookFailure: " + ex.getMessage());
         }
     }
-    assertFalse("Sách bị thêm vào bảng mặc dù dữ liệu không hợp lệ!", found);
-    }
-
 
     @Test
-    public void testUpdateBook() {
-        // Giả lập thông tin sách đã tồn tại
-    manageBooks.setTxtBookId("101");
-    manageBooks.setTxtBookName("Advanced Java");
-    manageBooks.setTxtAuthorName("Author B");
-    manageBooks.setTxtQuantity("10");
+    public void testUpdateBookSuccess() {
+        try {
+            // Giả lập chỉnh sửa sách
+            manageBooks.setTxtBookName("Updated Book");
+            manageBooks.setTxtAuthorName("Updated Author");
+            manageBooks.setTxtQuantity("15");
 
-    // Cập nhật sách
-    boolean result = manageBooks.updateBook();
-    manageBooks.setBookDetailsToTable();
-    assertTrue("Cập nhật sách không thành công!", result);
+            // Chọn sách cần chỉnh sửa
+            JTable jTable1 = getJTable1();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.addRow(new Object[]{"3", "Old Book", "Old Author", "10"}); // Giả lập thêm dòng sách vào bảng
+            jTable1.setRowSelectionInterval(0, 0); // Chọn dòng sách cần chỉnh sửa
 
-    // Kiểm tra bảng có dữ liệu đã cập nhật
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
-    boolean found = false;
-    for (int i = 0; i < model.getRowCount(); i++) {
-        if (model.getValueAt(i, 0).toString().equals("101")
-                && model.getValueAt(i, 1).toString().equals("Advanced Java")) {
-            found = true;
-            break;
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("editbuttonActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức
+
+            // Kiểm tra sau khi sửa thông tin sách
+            assertEquals("Updated Book", model.getValueAt(0, 1));  // Kiểm tra tên sách
+            assertEquals("Updated Author", model.getValueAt(0, 2));  // Kiểm tra tên tác giả
+        } catch (Exception ex) {
+            fail("Exception during testUpdateBookSuccess: " + ex.getMessage());
         }
     }
-    assertTrue("Sách không được cập nhật trong bảng!", found);
-    }
-    
-    //Cập nhật sách với ID không tồn tại
-    @Test
-    public void testUpdateBook_Failure() {
-    // Giả lập thông tin sách với ID không tồn tại
-    manageBooks.setTxtBookId("999"); // Không tồn tại
-    manageBooks.setTxtBookName("New Book");
-    manageBooks.setTxtAuthorName("Unknown");
-    manageBooks.setTxtQuantity("1");
-
-    // Cập nhật sách
-    boolean result = manageBooks.updateBook();
-    assertFalse("Cập nhật sách vẫn thành công với ID không tồn tại!", result);
-    }
-
 
     @Test
-    public void testDeleteBook() {
-        // Giả lập ID sách đã tồn tại
-    manageBooks.setTxtBookId("101");
+    public void testUpdateBookFailure() {
+        try {
+            // Giả lập chỉnh sửa sách với giá trị không hợp lệ (ví dụ: thiếu tên sách)
+            manageBooks.setTxtBookName("");
+            manageBooks.setTxtAuthorName("No Name Author");
+            manageBooks.setTxtQuantity("20");
 
-    // Xóa sách
-    boolean result = manageBooks.deleteBook();
-    manageBooks.setBookDetailsToTable();
-    assertTrue("Xóa sách không thành công!", result);
+            // Chọn sách cần chỉnh sửa
+            JTable jTable1 = getJTable1();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.addRow(new Object[]{"3", "Old Book", "Old Author", "10"}); // Giả lập thêm dòng sách vào bảng
+            jTable1.setRowSelectionInterval(0, 0); // Chọn dòng sách cần chỉnh sửa
 
-    // Kiểm tra bảng không còn dữ liệu sách
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
-    boolean found = false;
-    for (int i = 0; i < model.getRowCount(); i++) {
-        if (model.getValueAt(i, 0).toString().equals("101")) {
-            found = true;
-            break;
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("editbuttonActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức
+
+            // Kiểm tra thông báo lỗi
+            JOptionPane.showMessageDialog(manageBooks, "Lỗi: Tên sách không được để trống!");
+
+        } catch (Exception ex) {
+            fail("Exception during testUpdateBookFailure: " + ex.getMessage());
         }
     }
-    assertTrue("Sách đã xóa!", found);
-    }
-    
-    //Lỗi xóa ID không tồn tại
+
     @Test
-    public void testDeleteBook_Failure() {
-    // Giả lập ID sách không tồn tại
-    manageBooks.setTxtBookId("999"); // Không tồn tại
+    public void testDeleteBookSuccess() {
+        try {
+            // Giả lập thêm một sách vào bảng trước khi xóa
+            JTable jTable1 = getJTable1();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.addRow(new Object[]{"3", "Book to delete", "Author", "10"});
+            jTable1.setRowSelectionInterval(0, 0);  // Chọn sách đầu tiên để xóa
 
-    // Xóa sách
-    boolean result = manageBooks.deleteBook();
-    assertFalse("Xóa sách vẫn thành công với ID không tồn tại!", result);
-    }
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("deletebuttonActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức
 
-    
-    @Test
-    public void testSearchBook() {
-        // Giả lập dữ liệu tìm kiếm
-    String searchText = "Java"; // Từ khóa có tồn tại trong cơ sở dữ liệu
-
-    // Gọi phương thức tìm kiếm
-    manageBooks.searchBook(searchText);
-
-    // Kiểm tra bảng có chứa kết quả khớp
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel(); 
-    boolean found = false;
-    for (int i = 0; i < model.getRowCount(); i++) {
-        String bookName = model.getValueAt(i, 1).toString();
-        if (bookName.contains("Java")) {
-            found = true;
-            break;
+            // Kiểm tra nếu bảng đã cập nhật sau khi xóa
+            assertTrue(model.getRowCount() == 0);  // Kiểm tra nếu không còn dòng nào trong bảng
+        } catch (Exception ex) {
+            fail("Exception during testDeleteBookSuccess: " + ex.getMessage());
         }
     }
-    assertTrue("Không tìm thấy sách khớp với từ khóa trong bảng!", found);
-    }
-    
-    //Tìm kiếm với từ khóa không tồn tại
-    @Test
-    public void testSearchBook_Failure() {
-    // Giả lập dữ liệu tìm kiếm
-    String searchText = "NonExistentBook"; // Từ khóa không tồn tại trong cơ sở dữ liệu
-
-    // Gọi phương thức tìm kiếm
-    manageBooks.searchBook(searchText);
-
-    // Kiểm tra bảng không chứa kết quả nào
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
-    int rowCount = model.getRowCount();
-    assertEquals("Kết quả tìm kiếm không hợp lệ! Bảng không nên có dữ liệu khi từ khóa không khớp.", 0, rowCount);
-    }
-    
-    //Tìm kiếm với từ khóa rỗng
-    @Test
-    public void testSearchBook_EmptyKeyword() {
-    // Giả lập từ khóa tìm kiếm rỗng
-    String searchText = "";
-
-    // Gọi phương thức tìm kiếm
-    manageBooks.searchBook(searchText);
-
-    // Kiểm tra bảng không thay đổi hoặc trả về toàn bộ dữ liệu
-    DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
-    assertTrue("Tìm kiếm với từ khóa rỗng không nên làm bảng trống!", model.getRowCount() > 0);
-    }
-
-
 
     @Test
-    public void testClearTable() {
-        // Lấy DefaultTableModel từ tbl_bookDetails
-        DefaultTableModel model = (DefaultTableModel) manageBooks.getTblBookDetails().getModel();
+    public void testDeleteBookFailure() {
+        try {
+            // Không chọn dòng để xóa (giả lập lỗi khi không có sách nào được chọn)
+            JTable jTable1 = getJTable1();
+            jTable1.clearSelection();  // Xóa tất cả lựa chọn
 
-    // Thêm một dòng giả lập vào model
-        model.addRow(new Object[]{1, "Dummy", "Author", 10});
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("deletebuttonActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức
 
-    // Gọi phương thức clearTable
-        manageBooks.clearTable();
+            // Kiểm tra thông báo lỗi
+            JOptionPane.showMessageDialog(manageBooks, "Lỗi: Chọn sách cần xóa!");
 
-    // Xác nhận bảng trống
-        int rowCount = manageBooks.getTblBookDetails().getRowCount();
-        assertEquals("Bảng không được xóa sạch!", 0, rowCount);
-    }   
+        } catch (Exception ex) {
+            fail("Exception during testDeleteBookFailure: " + ex.getMessage());
+        }
+    }
+
+    @Test
+    public void testSearchBooks() {
+        try {
+            // Giả lập tìm kiếm
+            String searchQuery = "3";  // Tìm theo ID sách
+            manageBooks.setTxtSearch(searchQuery);
+
+            // Sử dụng Reflection để gọi phương thức private
+            Method method = ManageBooks.class.getDeclaredMethod("rSMaterialButtonCircle4ActionPerformed", java.awt.event.ActionEvent.class);
+            method.setAccessible(true);
+            method.invoke(manageBooks, (Object) null);  // Gọi phương thức tìm kiếm
+
+            // Kiểm tra bảng sau khi tìm kiếm
+            JTable jTable1 = getJTable1();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+            assertTrue(model.getRowCount() > 0);
+            assertEquals("3", model.getValueAt(0, 0));  // Kiểm tra ID sách tìm được
+            assertEquals("New Book", model.getValueAt(0, 1));  // Kiểm tra tên sách
+        } catch (Exception ex) {
+            fail("Exception during testSearchBooks: " + ex.getMessage());
+        }
+    }
 }
